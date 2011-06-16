@@ -8,6 +8,8 @@ define nfs::system::linux::export (
 	$export_directory = inline_template("<%= export.gsub('/', '_') %>")
 
 	#This directory exists solely to catch duplicate resources of export/host combinations
+  #This could be done in the Exec['rebuild exports'] script, but the user wouldn't see
+	#	where in their manifest the duplicate resource was occurring
 	file { "${nfs::config::set_work_directory}/${export_directory}":
 		ensure => directory;
 	}
