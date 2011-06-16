@@ -8,7 +8,7 @@ class nfs::system::linux {
 		"${nfs::config::set_work_directory}/export_contents.rb":
 			source => $puppetversion ? {
 				/2\../   => 'puppet:///modules/nfs/linux_export_contents.rb',
-				default => 'puppet:///nfs/linux_export_contents.rb',
+				default => 'puppet:///nfs/linux_export_contents.rb'
 			},
 			mode   => 700,
 			owner  => $nfs::config::set_file_owner,
@@ -17,9 +17,8 @@ class nfs::system::linux {
 	
 	#Execute the export_contents.rb script
 	exec { 'rebuild exports':
-		command => "${nfs::config::set_work_directory}/export_contents.rb apply",
-		unless  => "${nfs::config::set_work_directory}/export_contents.rb check",
-		creates => ['/etc/exports'],
+		command => "${nfs::config::set_work_directory}/export_contents.rb apply ${nfs::config::set_work_directory}",
+		unless  => "${nfs::config::set_work_directory}/export_contents.rb check ${nfs::config::set_work_directory}",
 	}
 
 	package { "${nfs::config::set_linux_package}":
