@@ -1,4 +1,4 @@
-define nfs::system::linux::exporthost (
+define nfs::system::solaris::exporthost (
   $export,
   $parameters,
   $host,

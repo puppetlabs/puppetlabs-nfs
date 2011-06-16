@@ -9,28 +9,35 @@ class Export
 
   def initialize(params)
     @name  = params[:name]
-    @hosts = Array.new
+    @hosts = Hash.new
 
     params[:host].to_a.each do |host|
-      @hosts << Host.new(:name => host, 
+      #Catch any duplicate resources defined
+      if @hosts.has_key? host
+        raise "ERROR: Duplicate resource found. nfs::exporthost['#{params['resource_title']}'] and nfs::exporthost['#{@hosts[host].resource_title}'] define the same host for the export #{params[:name]}"
+      end
+
+      @hosts[host] = Host.new(:name => host, 
         :host_parameters => params[:parameters], 
-        :subnet          => params[:subnet]
-      )   
+        :subnet          => params[:subnet],
+        :resource_title  => params[:resource_title]
+      )
     end 
   end 
 
   def to_s
-    "#{@name}\t" + hosts.map {|host| host.to_s }.join(' ')
+    "#{@name}\t" + @hosts.values.map {|host| host.to_s }.join(' ')
   end 
 end
 
 class Host
-  attr_accessor :host_parameters, :name, :subnet
+  attr_accessor :host_parameters, :name, :subnet, :resource_title
 
   def initialize(params)
-    @name       = params[:name]
-    @parameters = params[:host_parameters]
-    @subnet     = params[:subnet]
+    @name           = params[:name]
+    @parameters     = params[:host_parameters]
+    @subnet         = params[:subnet]
+    @resource_title = parmas[:resource_title]
   end 
 
   def to_s
@@ -48,7 +55,7 @@ end
 
 #Do some validation
 unless (ARGV.size == 2) and (['apply','check'].include? ARGV[0])
-  fail "ERROR: Requires two parameters. [apply|check] working_directory"
+  fail "ERROR: Requires two parameters. [apply|check] work_directory"
 end
 
 #Process the yaml files 

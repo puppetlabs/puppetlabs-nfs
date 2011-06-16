@@ -1,4 +1,4 @@
-define nfs::system::linux::export (
+define nfs::system::solaris::export (
   $export,
   $manage_directory
 ) {
