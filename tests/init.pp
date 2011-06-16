@@ -1,24 +1,31 @@
+## THESE TESTS MODIFY THE SYSTEM
+
 Nfs::Exporthost {
 	parameters => ['rw','no_root_squash'],
 }
 
-class { 'nfs::config': header => 'yo' }
-
-nfs::export { ['/tmp','/tmp/a']: }
-
-nfs::export { '/tmp/b': manage_directory => true }
-
-nfs::exporthost { 'myhost':
-	export	=> '/tmp',
+# Define a custom header
+class { 'nfs::config': 
+	header => '# My custom header' 
 }
 
-nfs::exporthost { 'myhostb':
-	export     => '/tmp',
+# Create our exports
+nfs::export { ['/export/testa','/export/testb']: }
+
+nfs::export { '/export/testc': manage_directory => true }
+
+
+# Create our export hosts
+nfs::exporthost { 'foobar':
+	export	=> '/export/testa',
+}
+
+nfs::exporthost { 'foobar01':
+	export     => '/export/testb',
 	parameters => ['ro'],
 }
 
-nfs::exporthost { 'myhostb-tmpa':
-	export => '/tmp/a',
-	host	 => myhostb,
-}
-
+#nfs::exporthost { 'foobar01-testc':
+#	export => '/export/testc',
+#	host	 => 'puppetnode01',
+#}

@@ -17,6 +17,7 @@ class nfs::system {
 	}
 
 	service { "${nfs::config::set_nfs_service}":
+		alias  => nfs,
 		ensure => running,
 		enable => true,
 	}

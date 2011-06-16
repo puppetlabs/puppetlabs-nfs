@@ -1,3 +1,59 @@
-NFS module
+#  NFS Puppet Module
 
-Currently in progress. This is a stub file for now
+Carl Caum <carl@puppetlabs.com>
+
+This module manages NFS and provides types to manage exports
+
+classes:
+
+nfs::config - Parameterized class that alters the default behavior of the module
+
+	Parameters:
+		* header: The header of the exports file, where applicable
+		* work_directory: Where the module stores its work files
+		* file_owner: The owner of the work files
+		* file_group: The group of the work files
+		* linux_package: The package to install on linux systems
+		* linux_pacakge_version: The version of the package to install on linux systems
+		* nfs_service: The name of the NFS service to manage
+
+	class { 'nfs::config':
+		header      => 'Custom Header':
+		nfs_service => nfsd,
+	}
+
+nfs::disable - Disables the NFS service
+
+	include nfs::disable
+
+
+defined types:
+
+nfs::export - Sets an export resource for export hosts to assign themselves to
+
+	Parameters:
+		* export: [default: namevar] The directory to export
+		* manage_directory: [default: false] Whether to manage the directory being exported
+
+	nfs::export { '/export/myexport': }
+
+nfs::exporthost:
+	Parameters:
+		* export: The export the host is to be associated with. Cannot be an array
+		* parameters: [default: ro,subtree_check] The export parameters
+		* host: [default: namevar] The host to assign to export
+		* subnet: [optional] The subnet to assign to the host
+
+	nfs::exporthost { 'hosta':
+		export     => '/export/myexport',
+		parameters => ['rw','no_root_squash'],
+	}
+
+
+CAVEATS:
+
+	Linux:
+		If a nfs::export resource is defined, but no nfs::exporthost resources use it, 
+			Linux will export the directory to any host
+
+

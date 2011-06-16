@@ -1,5 +1,5 @@
-define nfs::system::linux::export ( 
-	$export, 
+define nfs::system::linux::export (
+	$export,
 	$manage_directory
 ) {
 
@@ -7,7 +7,7 @@ define nfs::system::linux::export (
 
 	#Since the export directory is an absolute path, we need to convert the slashes
 	# to underscores to use the concat resource
-	$export_directory = inline_template("<%= export_directory.gsub('/', '_') %>")
+	$export_directory = inline_template("<%= export.gsub('/', '_') %>")
 
 	concat { "${nfs::config::set_work_directory}/${export_directory}":
 		owner  => $nfs::config::set_file_owner,
@@ -15,10 +15,10 @@ define nfs::system::linux::export (
 		mode   => 0644,
 		notify => Exec['rebuild exports'],
 	}
-	
+
 	concat::fragment { $export_directory:
 		target  => "${nfs::config::set_work_directory}/${export_directory}",
-		content => "\n${export_directory}\t",
+		content => "\n${export}\t",
 		order   => 10,
 	}
 
