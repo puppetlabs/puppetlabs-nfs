@@ -18,7 +18,7 @@ nfs::config - Parameterized class that alters the default behavior of the module
 		* nfs_service: The name of the NFS service to manage
 
 	class { 'nfs::config':
-		header      => 'Custom Header':
+		header      => '# Custom Header':
 		nfs_service => nfsd,
 	}
 
