@@ -25,7 +25,7 @@ nfs::exporthost { 'foobar01':
 	parameters => ['ro'],
 }
 
-#nfs::exporthost { 'foobar01-testc':
-#	export => '/export/testc',
-#	host	 => 'puppetnode01',
-#}
+nfs::exporthost { 'foobar01-testc':
+	export => '/export/testc',
+	host	 => 'puppetnode01',
+}
