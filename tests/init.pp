@@ -5,9 +5,9 @@ Nfs::Exporthost {
 }
 
 # Define a custom header
-class { 'nfs::config': 
-	header => '# My custom header' 
-}
+#class { 'nfs::config': 
+#	header => '# My custom header' 
+#}
 
 # Create our exports
 nfs::export { ['/export/testa','/export/testb']: }
@@ -21,11 +21,11 @@ nfs::exporthost { 'foobar':
 }
 
 nfs::exporthost { 'foobar01':
-	export     => '/export/testb',
+	export     => '/export/testc',
 	parameters => ['ro'],
 }
 
 nfs::exporthost { 'foobar01-testc':
-	export => '/export/testc',
-	host	 => 'puppetnode01',
+	export => '/export/testb',
+	host	 => 'foobar01',
 }

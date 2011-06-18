@@ -12,7 +12,7 @@ class Export
     @hosts = Array.new
 
     params[:host].to_a.each do |host|
-      @hosts << Host.new( :name => host, 
+      @hosts << Host.new(:name => host, 
         :host_parameters => params[:parameters], 
         :subnet          => params[:subnet]
       )   
@@ -34,39 +34,41 @@ class Host
   end 
 
   def to_s
-    @subnet = "/#{@subnet}" unless @subnet == :undef
+    @subnet = @subnet == :undef ? '' : "/#{@subnet}"
 
     "#{@name}#{@subnet}(#{@parameters.join(',')})"
-end
-
-#Process the yaml files and
-def init
-  Dir["#{ARGV[1]}/**/*.yaml"].each do |yaml|
-    resource = YAML.load( IO.read( yaml ) ) 
-
-    # The export might be a string, so ensure array
-    resource['export'].to_a.each do |exp|
-      exports[exp] = Export :name => exp,
-        :parameters => resource['parameters'],
-        :host       => resource['host']
-    end 
   end 
 end
 
-def contents
+def contents(exports)
   exports.values.map { |export|
     export.to_s
   }.join("\n")
 end
 
-#Call init
-init
+#Do some validation
+unless (ARGV.size == 2) and (['apply','check'].include? ARGV[0])
+  fail "ERROR: Requires two parameters. [apply|check] working_directory"
+end
+
+#Process the yaml files 
+Dir["#{ARGV[1]}/**/*.yaml"].each do |yaml|
+  resource = YAML.load( IO.read( yaml ) )
+
+  # The export might be a string, so ensure array
+  resource['export'].to_a.each do |exp|
+    exports[exp] = Export.new :name => exp,
+      :parameters => resource['parameters'],
+      :subnet     => resource['subnet'],
+      :host       => resource['host']
+  end
+end
 
 case ARGV[0]
-when 'apply'
-  file.open('/etc/exports', 'w') { |f| 
-    f.write contents
+when "apply"
+  File.open('/etc/exports', 'w') { |f|
+    f.write contents( exports )
   }
-when 'check'
-  IO.read( '/etc/exports' ) == contents
+when "check"
+  exit IO.read( '/etc/exports' ) == contents( exports )
 end
