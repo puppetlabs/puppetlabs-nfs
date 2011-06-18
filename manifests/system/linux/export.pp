@@ -3,23 +3,13 @@ define nfs::system::linux::export (
 	$manage_directory
 ) {
 
-	include concat::setup
-
 	#Since the export directory is an absolute path, we need to convert the slashes
-	# to underscores to use the concat resource
+	# to underscores to create a directory
 	$export_directory = inline_template("<%= export.gsub('/', '_') %>")
 
-	concat { "${nfs::config::set_work_directory}/${export_directory}":
-		owner  => $nfs::config::set_file_owner,
-		group  => $nfs::config::set_file_group,
-		mode   => 0644,
-		notify => Exec['rebuild exports'],
-	}
-
-	concat::fragment { $export_directory:
-		target  => "${nfs::config::set_work_directory}/${export_directory}",
-		content => "\n${export}\t",
-		order   => 10,
+	#This directory exists solely to catch duplicate resources of export/host combinations
+	file { "${nfs::config::set_work_directory}/${export_directory}":
+		ensure => directory;
 	}
 
 	#Make sure the export directory exists if we were asked to
