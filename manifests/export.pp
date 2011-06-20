@@ -15,13 +15,13 @@ define nfs::export (
   include nfs
 
   #Default to namevar if host param not given
-  $set_host = $host ? {
+  $set_export = $export ? {
     undef   => $name,
-    default => $host
+    default => $export
   }
 
   # Use name if we didn't get an export parameter
-  $export_directory = $export ? {
+  $export_real = $export ? {
     undef   => $name,
     default => $export
   }
@@ -29,17 +29,17 @@ define nfs::export (
   case $kernel {
     'Linux': {
       nfs::system::linux::export { $title:
-        export     => $export_directory,
+        export     => $export_real,
         parameters => $parameters,
-        host       => $set_host,
+        host       => $host,
         subnet     => $subnet,
       }
     }
     'Darwin': {
       nfs::system::darwin::export { $title:
-        export       => $export_directory,
+        export       => $export_real,
         parameters   => $parameters,
-        host         => $set_host,
+        host         => $host,
         subnet       => $subnet,
         network      => $network,
         offline      => $offline,
@@ -52,9 +52,9 @@ define nfs::export (
     }
     'Solaris': {
       nfs::system::solaris::export { $title:
-        export     => $export_directory,
+        export     => $export_real,
         parameters => $parameters,
-        host       => $set_host,
+        host       => $host,
         subnet     => $subnet,
       }
     }

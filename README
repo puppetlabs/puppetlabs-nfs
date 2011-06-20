@@ -45,8 +45,8 @@ nfs::export:
     * maproot: [optional] Map the root user to specified
     * mapall: [optional] Map all users to user specified
 
-  nfs::export { 'hosta':
-    export     => '/export/myexport',
+  nfs::export { '/exports/foo':
+    host       => ['hosta','hostb'],
     parameters => ['rw','no_root_squash'],
   }
 
