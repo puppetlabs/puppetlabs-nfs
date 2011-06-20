@@ -48,7 +48,7 @@ class Host
 end
 
 def contents(exports)
-  exports.values.map { |export|
+  IO.read( "#{ARGV[1]}/HEADER" ) + "\n" + exports.values.map { |export|
     export.to_s
   }.join("\n")
 end

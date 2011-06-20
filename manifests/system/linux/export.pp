@@ -1,22 +1,36 @@
 define nfs::system::linux::export (
   $export,
-  $manage_directory
+  $parameters,
+  $host,
+  $subnet = undef
 ) {
 
+  #Default to namevar if host param not given
+  $set_host= $host ? {
+    undef   => $name,
+    default => $host
+  }
+
   #Since the export directory is an absolute path, we need to convert the slashes
-  # to underscores to create a directory
-  $export_directory = inline_template("<%= export.gsub('/', '_') %>")
+  # to underscores to use the concat resource
+  $export_directory = inline_template("<%= export_directory.gsub('/', '_') %>")
 
-  #This directory exists solely to catch duplicate resources of export/host combinations
-  #This could be done in the Exec['rebuild exports'] script, but the user wouldn't see
-  # where in their manifest the duplicate resource was occurring
-  file { "${nfs::config::set_work_directory}/${export_directory}":
-    ensure => directory;
+  #This hash makes it easy to generate a yaml file to store the config on the node
+  $params = {
+    'resource_title' => $title,
+    'export'         => $export,
+    'parameters'     => $parameters,
+    'host'           => $host,
+    'subnet'         => $subnet,
   }
 
-  #Make sure the export directory exists if we were asked to
-  if $manage_directory == true {
-    file { $export: ensure => directory }
+  file { "${nfs::config::set_work_directory}/${export_directory}/$host.yaml":
+    content => inline_template("<%= params.to_yaml %>"),
+    owner   => $nfs::config::set_file_owner,
+    group   => $nfs::config::set_file_group,
   }
+
+  #Set our notifications
+  File["${nfs::config::set_work_directory}/${export_directory}/$host.yaml"] ~> Exec['rebuild exports']
 
 }

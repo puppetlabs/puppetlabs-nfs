@@ -13,9 +13,9 @@ class Export
 
     params[:parameters].to_a.each do |parameter|
       #Catch any duplicate resources defined
-      #if @hosts.has_key? host
-        #raise "ERROR: Duplicate resource found. nfs::exporthost['#{params['resource_title']}'] and nfs::exporthost['#{@hosts[host].resource_title}'] define the same host for the export #{params[:name]}"
-      #end
+      if @hosts.has_key? host
+        raise "ERROR: Duplicate resource found. nfs::exporthost['#{params['resource_title']}'] and nfs::exporthost['#{@hosts[host].resource_title}'] define the same host for the export #{params[:name]}"
+      end
 
       @parameters[parameter] = Parameter.new(:name => parameter,
         :subnet          => params[:subnet],
@@ -64,7 +64,7 @@ class Parameter
 end
 
 def contents(exports)
-  exports.values.map { |export|
+  IO.read( "#{ARGV[1]}/HEADER" ) + "\n" + exports.values.map { |export|
     export.to_s
   }.join("\n")
 end
