@@ -1,8 +1,15 @@
 define nfs::system::darwin::exporthost (
-	$export,
-	$parameters,
-	$host,
-	$subnet = undef
+  $export,
+  $parameters,
+  $host,
+  $subnet = undef,
+  $network = undef,
+  $offline = undef,
+  $sec = undef,
+  $ro = undef,
+  $alldirs = undef,
+  $maproot = undef,
+  $mapall = undef
 ) {
 
   #Default to namevar if host param not given
@@ -11,21 +18,35 @@ define nfs::system::darwin::exporthost (
     default => $host
   }
 
-	#Since the export directory is an absolute path, we need to convert the slashes
-	# to underscores to use the concat resource
-	$export_directory = inline_template("<%= export_directory.gsub('/', '_') %>")
+  variable_select($offline, '')
 
-  $subnet_string = $subnet ? {
-    undef   => '',
-    default => "/$subnet"
+  #Since the export directory is an absolute path, we need to convert the slashes
+  # to underscores to use the concat resource
+  #$export_directory = inline_template("<%= export_directory.gsub('/', '_') %>")
+
+  #This hash makes it easy to generate a yaml file to store the config on the node
+  $params = {
+    'resource_title' => $title,
+    'export'         => $export,
+    'parameters'     => $parameters,
+    'host'           => $host,
+    'subnet'         => $subnet,
+    'network'        => $network,
+    'offline'        => $offline,
+    'sec'            => $sec,
+    'ro'             => $ro,
+    'alldirs'        => $alldirs,
+    'maproot'        => $maproot,
+    'mapall'         => $mapall
   }
 
-  $parameters_string = inline_template("<%= parameters.to_a.join(',') %>")
-
-  concat::fragment{"${export}-${hostname}":
-    target  => "${nfs::config::set_work_directory}/${export_directory}",
-    content => "${hostname}${subnet_string}(${parameters_string})\t",
-    order   => 20,
+  file { "${nfs::config::set_work_directory}/${title}.yaml":
+    content => inline_template("<%= params.to_yaml %>"),
+    owner   => $nfs::config::set_file_owner,
+    group   => $nfs::config::set_file_group,
   }
+
+  #Set our notifications
+  File["${nfs::config::set_work_directory}/${title}.yaml"] ~> Exec['rebuild exports']
 
 }

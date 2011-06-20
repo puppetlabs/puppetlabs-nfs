@@ -5,6 +5,11 @@ class nfs::system::linux {
       ensure  => directory,
       purge   => true,
       recurse => true;
+    "${nfs::config::set_work_directory}/HEADER":
+      content => $nfs::config::set_header,
+      owner   => $nfs::config::set_file_owner,
+      group   => $nfs::config::set_file_group,
+      mode    => 0644;
     "${nfs::config::set_work_directory}/export_contents.rb":
       source => $puppetversion ? {
         /2\../   => 'puppet:///modules/nfs/solaris_export_contents.rb',

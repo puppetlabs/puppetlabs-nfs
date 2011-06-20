@@ -1,4 +1,5 @@
 class nfs {
-	include nfs::config
-	include nfs::system
+
+  include nfs::config
+  include nfs::system
 }
