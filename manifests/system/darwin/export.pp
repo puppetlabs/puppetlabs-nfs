@@ -18,12 +18,6 @@ define nfs::system::darwin::export (
     default => $host
   }
 
-  variable_select($offline, '')
-
-  #Since the export directory is an absolute path, we need to convert the slashes
-  # to underscores to use the concat resource
-  #$export_directory = inline_template("<%= export_directory.gsub('/', '_') %>")
-
   #This hash makes it easy to generate a yaml file to store the config on the node
   $params = {
     'resource_title' => $title,
