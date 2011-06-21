@@ -2,21 +2,15 @@ define nfs::system::darwin::export (
   $export,
   $parameters,
   $host,
-  $subnet = undef,
-  $network = undef,
-  $offline = undef,
-  $sec = undef,
-  $ro = undef,
-  $alldirs = undef,
-  $maproot = undef,
-  $mapall = undef
+  $subnet,
+  $network,
+  $offline,
+  $sec,
+  $ro,
+  $alldirs,
+  $maproot,
+  $mapall
 ) {
-
-  #Default to namevar if host param not given
-  $hostname = $host ? {
-    undef   => $name,
-    default => $host
-  }
 
   #This hash makes it easy to generate a yaml file to store the config on the node
   $params = {
@@ -34,13 +28,13 @@ define nfs::system::darwin::export (
     'mapall'         => $mapall
   }
 
-  file { "${nfs::config::set_work_directory}/${title}.yaml":
+  file { "${nfs::config::work_directory_real}/${title}.yaml":
     content => inline_template("<%= params.to_yaml %>"),
-    owner   => $nfs::config::set_file_owner,
-    group   => $nfs::config::set_file_group,
+    owner   => $nfs::config::file_owner_real,
+    group   => $nfs::config::file_group_real,
   }
 
   #Set our notifications
-  File["${nfs::config::set_work_directory}/${title}.yaml"] ~> Exec['rebuild exports']
+  File["${nfs::config::work_directory_real}/${title}.yaml"] ~> Exec['rebuild exports']
 
 }

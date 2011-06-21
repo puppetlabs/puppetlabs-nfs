@@ -8,8 +8,7 @@ Nfs::Exporthost {
 nfs::export { 'google.com':
   export => ['/exports/testa','/exports/testd'],
   ro     => true,
-  mapall => nobody,
-  host   => '',
+  mapall => nobody
 }
 
 nfs::export { 'google.com-testc':

@@ -41,7 +41,7 @@ class Host
   end 
 
   def to_s
-    @subnet = @subnet == :undef ? '' : "/#{@subnet}"
+    @subnet = @subnet == 'UNSET' ? '' : "/#{@subnet}"
 
     "#{@name}#{@subnet}(#{@parameters.join(',')})"
   end 

@@ -8,6 +8,6 @@ class nfs::system::disable inherits nfs::system {
   if $kernel == 'Solaris' {
     include nfs::system::solaris::disable
 
-    Service["${nfs::config::set_nfs_service}"] ~> Exec['unshare exports']
+    Service["${nfs::config::nfs_service_real}"] ~> Exec['unshare exports']
   }
 }

@@ -8,12 +8,6 @@ class nfs::config::defaults {
   #The directory that the exports fragments are located in
   $work_directory = '/etc/exports.d'
 
-  #Determines the ensure value of the nfsd service
-  $service_ensure = running
-
-  #Determines the enable value of ther nfsd service
-  $service_enable = true
-
   #User to own files as
   $file_owner = root
 

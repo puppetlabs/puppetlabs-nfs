@@ -1,28 +1,22 @@
 define nfs::export (
   $export,
   $parameters = ['ro','subtree_check'],
-  $host = undef,
-  $subnet = undef,
-  $network = undef,
-  $offline = undef,
-  $sec = undef,
-  $ro = undef,
-  $alldirs = undef,
-  $maproot = undef,
-  $mapall = undef
+  $host    = 'UNSET',
+  $subnet  = 'UNSET',
+  $network = 'UNSET',
+  $offline = 'UNSET',
+  $sec     = 'UNSET',
+  $ro      = 'UNSET',
+  $alldirs = 'UNSET',
+  $maproot = 'UNSET',
+  $mapall  = 'UNSET'
 ) {
 
   include nfs
 
-  #Default to namevar if host param not given
-  $set_export = $export ? {
-    undef   => $name,
-    default => $export
-  }
-
   # Use name if we didn't get an export parameter
   $export_real = $export ? {
-    undef   => $name,
+    'UNSET' => $name,
     default => $export
   }
 

@@ -22,7 +22,7 @@ class Export
 
     self.instance_variables.reject{ |v| ['@name','@hosts','@parameters'].include? v }.each do |var|
         var_val = self.instance_variable_get(var)
-        unless var_val == :undef
+        unless var_val == 'UNSET'
 
           #This looks funny but the variable could be TrueClass or a String/Array
           if var_val.class  == TrueClass
@@ -35,6 +35,8 @@ class Export
   end
 
   def to_s
+    @hosts = @hosts == 'UNSET' ? [] : @hosts
+
     "#{@name}\t #{@parameters.join(' ')} #{@hosts.to_a.join(' ')}"
   end
 end
@@ -50,7 +52,7 @@ class Host
   end
 
   def to_s
-    @subnet = @subnet == :undef ? '' : "/#{@subnet}"
+    @subnet = @subnet == 'UNSET' ? '' : "/#{@subnet}"
 
     "#{@name}#{@subnet}(#{@parameters.join(',')})"
   end

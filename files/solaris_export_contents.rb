@@ -53,7 +53,7 @@ class Parameter
 
   def to_s
     host_string = String.new
-    @subnet = @subnet == :undef ? '' : "/#{@subnet}"
+    @subnet = @subnet == 'UNSET' ? '' : "/#{@subnet}"
 
     unless @hosts.empty?
       host_string = '=' + @hosts.join("#{@subnet}:")
