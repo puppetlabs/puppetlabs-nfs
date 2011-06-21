@@ -12,6 +12,9 @@ define nfs::system::darwin::export (
   $mapall
 ) {
 
+  #The title can't contain '/' characters
+  validate_re($title, '^[^\/]*$')
+
   #This hash makes it easy to generate a yaml file to store the config on the node
   $params = {
     'resource_title' => $title,

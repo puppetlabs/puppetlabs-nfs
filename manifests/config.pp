@@ -1,11 +1,11 @@
 class nfs::config (
-  $header = 'UNSET',
+  $header         = 'UNSET',
   $work_directory = 'UNSET',
-  $file_owner = 'UNSET',
-  $file_group = 'UNSET',
-  $linux_package = 'UNSET',
-  $linux_package_version = 'UNSET',
-  $nfs_service = 'UNSET'
+  $file_owner     = 'UNSET',
+  $file_group     = 'UNSET',
+  $linux_package  = 'UNSET',
+  $nfs_service    = 'UNSET'
+  $linux_package_version = 'UNSET'
 ) {
 
   include nfs::config::defaults
