@@ -1,3 +1,52 @@
-NFS module
+#  NFS Puppet Module
 
-Currently in progress. This is a stub file for now
+Carl Caum <carl@puppetlabs.com>
+
+This module manages NFS and provides types to manage exports
+
+classes:
+
+nfs::config - Parameterized class that alters the default behavior of the module
+
+  Parameters:
+    * header: The header of the exports file, where applicable
+    * work_directory: Where the module stores its work files
+    * file_owner: The owner of the work files
+    * file_group: The group of the work files
+    * linux_package: The package to install on linux systems
+    * linux_pacakge_version: The version of the package to install on linux systems
+    * nfs_service: The name of the NFS service to manage
+
+  class { 'nfs::config':
+    header      => '# Custom Header':
+    nfs_service => nfsd,
+  }
+
+nfs::disable - Disables the NFS service
+
+  include nfs::disable
+
+
+defined types:
+
+nfs::export:
+  Parameters:
+    * export: The export the host is to be associated with. Can be an array
+    * parameters: [default: ro,subtree_check] The export parameters
+    * host: [default: namevar] The host to assign to export. Can be an array
+    * subnet: [optional] The subnet to allow connections from. Usually used if host is a network
+
+    MAC OS X Parameters (Requires Tiger or better)
+    * network: [optional] The network to allow connections from
+    * offline: [default: false] Treat the export is if it is unavailable. Can be true/false
+    * sec: [optional] The security mechanisms.  Should be an array
+    * ro:  [default: false] Export should be read only, Can be true/false
+    * alldirs: [default: false] Allows the host(s) to mount at any point within the file system. Can be true/false
+    * maproot: [optional] Map the root user to specified
+    * mapall: [optional] Map all users to user specified
+
+  nfs::export { '/exports/foo':
+    host       => ['hosta','hostb'],
+    parameters => ['rw','no_root_squash'],
+  }
+
